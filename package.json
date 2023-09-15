@@ -1,0 +1,17 @@
+{
+  "type": "module",
+  "dependencies": {
+    "@octokit/core": "^5.0.0"
+  },
+  "name": "curl-builder",
+  "module": "index.ts",
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "start": "bun run index.js"
+  }
+}
