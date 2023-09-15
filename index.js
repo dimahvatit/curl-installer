@@ -1,5 +1,4 @@
 import { Octokit } from "@octokit/core";
-import fs from "fs";
 
 const versionRegex = /(\d+\.\d+\.\d+)/;
 
