@@ -10,30 +10,13 @@ async function main() {
                     console.log("curl is currently not isntalled\nproceeding to installation of the latest version");
                     upgradeCurl("0.0.0");
                 } else {
-		    const currentVersion = await getCurrentVersion();
+                    const currentVersion = await getCurrentVersion();
                     upgradeCurl(currentVersion);
                 }
             }
         })
     } catch (err) {
         console.error(`An error occured: ${err}`);
-    }
-}
-
-// получение токена из файла
-async function readToken() {
-    try {
-        let token = await Bun.file("token.txt").text();
-
-        if (token.length > 0) {
-            console.log(`Token accessed at ${new Date().toLocaleTimeString("ru-RU")}`);
-            return token.trim();
-        } else {
-            throw new Error("Token is empty!");
-        }
-    } catch (err) {
-        console.log(`Error while reading file: ${err}`);
-        throw err;
     }
 }
 
@@ -86,7 +69,7 @@ async function getCurrentVersion() {
 // получение последней версии curl
 async function getLatestRelease() {
     try {
-        let token = await readToken().then(token => token);
+        let token = process.env.TOKEN;
         const octokit = new Octokit({
             auth: token
         })

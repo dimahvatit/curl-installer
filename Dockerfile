@@ -8,10 +8,11 @@ RUN apt update && \
     libtool \
     groff \
     libssl-dev \
-    git
+    git \
+    libc-ares-dev
 
-WORKDIR /home/dimahvatit/curl
+WORKDIR /var/lib/app/curl
 RUN git clone https://github.com/curl/curl.git .
 RUN autoreconf -fi
-RUN ./configure --with-openssl
+RUN ./configure --with-openssl --enable-ares
 RUN make
