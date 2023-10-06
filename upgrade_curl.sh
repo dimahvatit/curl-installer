@@ -6,7 +6,7 @@ if [ "$#" -ne 2 ]; then
   exit 1
 fi
 
-CURL_DIR="/home/dimahvatit/bin/curl"
+CURL_DIR="$HOME/bin/curl"
 CURRENT_VERSION="$1"
 LATEST_VERSION="$2"
 EXISTING_IMAGE="curl:$CURRENT_VERSION"
