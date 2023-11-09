@@ -6,20 +6,16 @@ download_src() {
   cd ./src
   wget $1
   local TAR_NAME=$(ls)
-  tar xzf $TAR_NAME && rm $TAR_NAME
-  local SRC_DIR_NAME=$(ls)
-  mv $SRC_DIR_NAME/* ./
-  mv $SRC_DIR_NAME/.* ./
-  rm -rf $SRC_DIR_NAME
+  tar -xzf $TAR_NAME --strip 1 && rm $TAR_NAME
   cd ../
 }
 
 remove_image () {
-  # Удаляем старый образ Docker, если он существует
+  # Удаляем образ Docker, если он существует
   if [[ "$(docker images -q $1 2> /dev/null)" == "" ]]; then
-    echo "Старый образ $1 не найден"
+    echo "Образ $1 не найден"
   else
-    echo "Удаляем старый образ $1..."
+    echo "Удаляем образ $1..."
     docker rmi $1
   fi
 }
@@ -42,28 +38,24 @@ main () {
   local TAR_URL="$3"
   local EXISTING_IMAGE="curl:$CURRENT_VERSION"
 
-  echo CURRENT_VERSION=$CURRENT_VERSION
-  echo LATEST_VERSION=$LATEST_VERSION
-  echo TAR_URL=$TAR_URL
-
-  download_src $TAR_URL
+  # download_src $TAR_URL
   remove_image $EXISTING_IMAGE
 
   echo "Собираем образ curl:$LATEST_VERSION..."
-  docker build . -t curl:$LATEST_VERSION
+  docker build --build-arg TAR_URL=$TAR_URL . -t curl:$LATEST_VERSION
 
   echo "Запускаем контейнер curl:$LATEST_VERSION..."
   TEMP_CONTAINER_ID=$(docker create curl:$LATEST_VERSION)
 
   echo "Копируем curl из контейнера"
   rm -rf ~/bin/curl
-  docker cp $TEMP_CONTAINER_ID:/var/lib/app/curl/src/ ~/bin/curl
+  docker cp $TEMP_CONTAINER_ID:/usr/bin/app/curl/src/ ~/bin/curl
 
   echo "Удаляем контейнер"
   docker rm $TEMP_CONTAINER_ID
 
   echo "Удаляем созданный образ"
-  docker rmi curl:$LATEST_VERSION
+  remove_image curl:$LATEST_VERSION
 
   update_path $CURL_DIR
 }
