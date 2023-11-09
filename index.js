@@ -22,7 +22,10 @@ async function main() {
 
 // обновление/установка последней версии curl
 function upgradeCurl(currentVersion) {
-    getLatestRelease().then(latestVersion => {
+    getLatestRelease().then(data => {
+        let latestVersion = data.name;
+        let tarballUrl = data.tarballUrl;
+
         const matches = latestVersion.match(versionRegex);
 
         if (matches && matches.length > 0) {
@@ -34,7 +37,7 @@ function upgradeCurl(currentVersion) {
             } else {
                 console.log("There is a newer version of curl available.");
                 console.log("running ./upgrade_curl.sh...");
-                Bun.spawn(["upgrade_curl.sh", currentVersion, latestVersion]);
+                Bun.spawn(["upgrade_curl.sh", currentVersion, latestVersion, tarballUrl]);
             }
         }
     });
@@ -82,7 +85,12 @@ async function getLatestRelease() {
             }
         });
 
-        return response.data.name;
+        let res = {
+            tarballUrl: response.data.tarball_url,
+            name: response.data.name
+        };
+
+        return res;
     } catch (err) {
         console.error(`Error while fetching latest release: ${err}`);
         throw err;
